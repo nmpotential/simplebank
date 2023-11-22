@@ -1,4 +1,3 @@
-# Workflow to run unit tests when changes are pushed to the master branch or a pull request is made to the master branch
 name: Run unit tests
 
 on:
@@ -8,50 +7,20 @@ on:
     branches: [ master ]
 
 jobs:
-  # Define a job named Test that runs on an Ubuntu environment
+
   test:
     name: Test
     runs-on: ubuntu-latest
-
-    # Define a PostgreSQL service container to run tests against a PostgreSQL database
-    services:
-      postgres:
-        image: postgres:16-alpine
-        env:
-          POSTGRES_USER: root
-          POSTGRES_PASSWORD: secret
-          POSTGRES_DB: simple_bank
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
     steps:
-    # Set up the Go 1.x environment
+
     - name: Set up Go 1.x
       uses: actions/setup-go@v2
       with:
         go-version: ^1.21
       id: go
 
-    # Check out the code into the Go module directory
     - name: Check out code into the Go module directory
       uses: actions/checkout@v2
 
-    # Install golang-migrate for database migrations
-    - name: Install golang-migrate
-      run: |
-        curl -L https://github.com/golang-migrate/migrate/releases/download/v4.14.1/migrate.linux-amd64.tar.gz | tar xvz
-        sudo mv migrate.linux-amd64 /usr/bin/migrate
-        which migrate
-
-    # Run database migrations using the make migrateup command
-    - name: Run migrations
-      run: make migrateup
-
-    # Run tests using the make test command
     - name: Test
       run: make test
