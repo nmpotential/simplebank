@@ -9,13 +9,50 @@ import (
 )
 
 type Querier interface {
-	CreateAccount(ctx context.Context) (Account, error)
-	DeleteAccount(ctx context.Context) error
-	GetAccount(ctx context.Context) (Account, error)
-	ListAccounts(ctx context.Context) ([]Account, error)
-	// LIMIT 1;
-	// OFFSET 2;
-	UpdateAccount(ctx context.Context) (Account, error)
+	// Returns the updated account details
+	// Adds a specified amount to an account's balance based on ID
+	AddAccountBalance(ctx context.Context, arg AddAccountBalanceParams) (Account, error)
+	// Inserts a new account into the 'accounts' table with provided details
+	CreateAccount(ctx context.Context, arg CreateAccountParams) (Account, error)
+	// Inserts a new entry into the 'entries' table with provided details
+	CreateEntry(ctx context.Context, arg CreateEntryParams) (Entry, error)
+	// Inserts a new transfer record into the 'transfers' table with details of the transaction
+	CreateTransfer(ctx context.Context, arg CreateTransferParams) (Transfer, error)
+	// Inserts a new user record into the 'users' table with provided details
+	CreateUser(ctx context.Context, arg CreateUserParams) (User, error)
+	// Inserts a new record into the 'verify_emails' table with username, email, and secret_code values
+	CreateVerifyEmail(ctx context.Context, arg CreateVerifyEmailParams) (VerifyEmail, error)
+	// Returns the updated account details
+	// Deletes a specific account from the 'accounts' table based on ID
+	DeleteAccount(ctx context.Context, id int64) error
+	// Returns the newly created account
+	// Retrieves a single account from 'accounts' table based on ID
+	GetAccount(ctx context.Context, id int64) (Account, error)
+	// Retrieves a single account for update from 'accounts' table based on ID
+	GetAccountForUpdate(ctx context.Context, id int64) (Account, error)
+	// Returns the newly created entry
+	// Retrieves a single entry from 'entries' table based on ID
+	GetEntry(ctx context.Context, id int64) (Entry, error)
+	// Returns the newly created transfer record
+	// Retrieves a single transfer record from 'transfers' table based on its unique ID
+	GetTransfer(ctx context.Context, id int64) (Transfer, error)
+	// Returns the newly created user record
+	// Retrieves a single user record from 'users' table based on username
+	GetUser(ctx context.Context, username string) (User, error)
+	// Retrieves multiple accounts based on owner, limited by a count and offset
+	ListAccounts(ctx context.Context, arg ListAccountsParams) ([]Account, error)
+	// Retrieves multiple entries based on account_id, limited by a count and offset
+	ListEntries(ctx context.Context, arg ListEntriesParams) ([]Entry, error)
+	// Retrieves multiple transfer records from 'transfers' table based on account IDs with pagination
+	ListTransfers(ctx context.Context, arg ListTransfersParams) ([]Transfer, error)
+	// Specifies the starting point for results
+	// Updates the balance of a single account based on ID
+	UpdateAccount(ctx context.Context, arg UpdateAccountParams) (Account, error)
+	// Updates a user record with provided data if not null (COALESCE used to manage NULL values)
+	UpdateUser(ctx context.Context, arg UpdateUserParams) (User, error)
+	// Returns the newly created verification email record
+	// Updates a verification email record setting is_used to TRUE under specific conditions
+	UpdateVerifyEmail(ctx context.Context, arg UpdateVerifyEmailParams) (VerifyEmail, error)
 }
 
 var _ Querier = (*Queries)(nil)

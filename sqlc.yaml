@@ -1,16 +1,36 @@
+# The version of the YAML configuration file
 version: "2"
+
+# SQL configurations for code generation
 sql:
-- schema: "./db/migration/"
-  queries: "./db/query/"
-  engine: "postgresql"
-  gen:
-    go: 
-      package: "db"
-      out: "db/sqlc"
-      sql_package: "pgx/v5"
-      emit_json_tags: true
-      emit_interface: true
-      emit_empty_slices: true
-      overrides:
-        - db_type: "timestamptz"
-          go_type: "time.Time"
+  # Configuration for schema and query directories
+  - schema: "./db/migration/"  # Path to directory containing schema migration files
+    queries: "./db/query/"     # Path to directory containing SQL query files
+
+    # Database engine used for SQL operations
+    engine: "postgresql"
+
+    # Code generation settings
+    gen:
+      # Language-specific generation configurations for Go
+      go:
+        # Package name for the generated Go code
+        package: "db"
+
+        # Output directory for the generated SQLC Go code
+        out: "db/sqlc"
+
+        # SQL package used in the generated code (pgx/v5 in this case)
+        sql_package: "pgx/v5"
+
+        # Configuration options for Go code generation
+        emit_json_tags: true       # Generate JSON tags for struct fields
+        emit_interface: true       # Emit interfaces for query builders
+        emit_empty_slices: true    # Emit empty slices instead of nil for arrays
+        
+        # Overrides for specific database types to Go types
+        overrides:
+          - db_type: "timestamptz"           # Database type timestamptz
+            go_type: "time.Time"             # Go type time.Time
+          - db_type: "uuid"                  # Database type uuid
+            go_type: "github.com/google/uuid.UUID"  # Go type github.com/google/uuid.UUID
